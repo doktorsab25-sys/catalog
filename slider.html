@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <style>
+    body, html { margin: 0; padding: 0; height: 100%; background: #fff; }
+    .swiper { width: 100%; height: 100vh; }
+    .swiper-slide img { width: 100%; height: 100%; object-fit: contain; }
+    .swiper-button-next, .swiper-button-prev { color: #000; scale: 0.6; opacity: 0.5; }
+    .swiper-pagination-bullet-active { background: #000 !important; }
+  </style>
+</head>
+<body>
+  <div class="swiper">
+    <div class="swiper-wrapper" id="slides-container">
+      </div>
+    <div class="swiper-pagination"></div>
+    <div class="swiper-button-prev"></div>
+    <div class="swiper-button-next"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    // Этот скрипт берет ссылки из адреса и превращает их в слайды
+    const urlParams = new URLSearchParams(window.location.search);
+    const imgs = urlParams.get('imgs'); // Ищем параметр ?imgs=
+    const container = document.getElementById('slides-container');
+
+    if (imgs) {
+      const imgList = imgs.split(','); // Разделяем ссылки через запятую
+      imgList.forEach(url => {
+        const slide = document.createElement('div');
+        slide.className = 'swiper-slide';
+        slide.innerHTML = `<img src="${url.trim()}">`;
+        container.appendChild(slide);
+      });
+    }
+
+    // Запуск слайдера
+    new Swiper('.swiper', {
+      loop: true,
+      pagination: { el: '.swiper-pagination', clickable: true },
+      navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
+    });
+  </script>
+</body>
+</html>
