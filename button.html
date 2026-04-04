@@ -2,24 +2,22 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap" rel="stylesheet">
     <style>
-        /* Убираем все отступы и полосы прокрутки */
+        /* Убираем все отступы и фиксируем высоту для мобильных */
         html, body { 
             margin: 0; 
             padding: 0; 
             width: 100%; 
             height: 100%; 
-            overflow: hidden; /* ГЛАВНОЕ: убирает полосы прокрутки */
+            overflow: hidden; 
             background: transparent; 
             display: flex; 
-            flex-direction: column; 
             align-items: center; 
             justify-content: center; 
-            font-family: 'Montserrat', sans-serif;
         }
         
-        /* Стиль кнопки в стиле Amazon */
         .amz-button {
             background: #FFD814;
             border: 1px solid #FCD200;
@@ -29,70 +27,42 @@
             display: inline-block;
             font-family: 'Montserrat', sans-serif;
             font-size: 14px;
-            line-height: 35px;
-            padding: 0 24px;
+            /* Фиксированная высота кнопки, чтобы она не росла на телефоне */
+            height: 40px; 
+            line-height: 40px;
+            padding: 0 20px;
             text-align: center;
             text-decoration: none;
             font-weight: 600;
-            min-width: 220px;
-            transition: background 0.2s, transform 0.1s;
-            cursor: pointer;
+            /* Ограничиваем ширину, чтобы кнопка не была на весь экран */
+            width: 220px; 
             box-sizing: border-box;
+            transition: background 0.2s;
+            white-space: nowrap;
         }
 
-        .amz-button:hover { 
-            background: #F7CA00; 
-            border-color: #F2C200; 
-        }
+        .amz-button:hover { background: #F7CA00; }
 
-        .amz-button:active {
-            transform: translateY(1px);
-        }
-
-        /* Панель генератора (видна только в режиме ?mode=edit) */
+        /* Стиль для режима настройки */
         #generator {
-            background: #ffffff;
-            padding: 15px;
-            border-radius: 12px;
-            border: 1px solid #ddd;
-            margin-bottom: 10px;
+            position: absolute;
+            top: 0;
+            background: white;
+            padding: 10px;
+            border: 1px solid #ccc;
             display: none;
-            width: 280px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             z-index: 100;
-        }
-
-        input { 
-            width: 100%; 
-            margin: 5px 0; 
-            padding: 8px; 
-            box-sizing: border-box; 
-            border: 1px solid #ccc; 
-            border-radius: 6px; 
-            font-family: 'Montserrat', sans-serif;
+            font-family: sans-serif;
             font-size: 12px;
-        }
-
-        #result-link { 
-            font-size: 9px; 
-            word-break: break-all; 
-            background: #f9f9f9; 
-            padding: 5px; 
-            border: 1px dashed #bbb; 
-            margin-top: 8px; 
-            user-select: all; 
-            color: #444; 
         }
     </style>
 </head>
 <body>
 
     <div id="generator">
-        <strong style="font-size: 14px;">Настройка кнопки VSC</strong>
-        <input type="text" id="inputText" placeholder="Текст (напр. Смотреть варианты)" oninput="generate()">
-        <input type="text" id="inputLink" placeholder="Ссылка на страницу" oninput="generate()">
-        <div style="font-size: 10px; color: #888; margin-top: 5px;">Скопируйте для Buildin.ai:</div>
-        <div id="result-link">Здесь появится ссылка...</div>
+        <input type="text" id="inputText" placeholder="Текст" oninput="generate()">
+        <input type="text" id="inputLink" placeholder="Ссылка" oninput="generate()">
+        <div id="result-link" style="font-size: 9px; word-break: break-all; margin-top: 5px;"></div>
     </div>
 
     <a id="btn" class="amz-button" href="#" target="_top">Загрузка...</a>
@@ -101,29 +71,17 @@
         const params = new URLSearchParams(window.location.search);
         const text = params.get('text');
         const link = params.get('link');
-        const mode = params.get('mode');
+        if (params.get('mode') === 'edit') document.getElementById('generator').style.display = 'block';
 
         const btn = document.getElementById('btn');
-        const genBox = document.getElementById('generator');
-        const resDiv = document.getElementById('result-link');
-
-        // Показываем генератор только если в ссылке есть mode=edit
-        if (mode === 'edit') {
-            genBox.style.display = 'block';
-        }
-
-        // Устанавливаем текст и ссылку из параметров адреса
-        btn.innerText = text || 'Смотреть варианты';
+        btn.innerText = text || 'смотреть варианты';
         btn.href = link || '#';
 
         function generate() {
-            const t = document.getElementById('inputText').value || 'Смотреть варианты';
+            const t = document.getElementById('inputText').value || 'смотреть варианты';
             const l = document.getElementById('inputLink').value || '#';
-            // Создаем чистую ссылку без лишних параметров
-            const baseUrl = window.location.origin + window.location.pathname;
-            const finalUrl = `${baseUrl}?text=${encodeURIComponent(t)}&link=${encodeURIComponent(l)}`;
-            
-            resDiv.innerText = finalUrl;
+            const finalUrl = `${window.location.origin}${window.location.pathname}?text=${encodeURIComponent(t)}&link=${encodeURIComponent(l)}`;
+            document.getElementById('result-link').innerText = finalUrl;
             btn.innerText = t;
             btn.href = l;
         }
