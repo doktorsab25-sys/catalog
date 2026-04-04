@@ -4,8 +4,22 @@
     <meta charset="UTF-8">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600&display=swap" rel="stylesheet">
     <style>
-        body { margin: 0; font-family: 'Montserrat', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; background: transparent; }
+        /* Убираем все отступы и полосы прокрутки */
+        html, body { 
+            margin: 0; 
+            padding: 0; 
+            width: 100%; 
+            height: 100%; 
+            overflow: hidden; /* ГЛАВНОЕ: убирает полосы прокрутки */
+            background: transparent; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            font-family: 'Montserrat', sans-serif;
+        }
         
+        /* Стиль кнопки в стиле Amazon */
         .amz-button {
             background: #FFD814;
             border: 1px solid #FCD200;
@@ -13,40 +27,71 @@
             box-shadow: 0 2px 5px 0 rgba(213,217,217,.5);
             color: #0F1111;
             display: inline-block;
-            font-family: 'Montserrat', sans-serif; /* Применяем Montserrat */
+            font-family: 'Montserrat', sans-serif;
             font-size: 14px;
             line-height: 35px;
             padding: 0 24px;
             text-align: center;
             text-decoration: none;
-            font-weight: 600; /* Делаем текст чуть жирнее для стиля */
+            font-weight: 600;
             min-width: 220px;
-            transition: background 0.2s;
+            transition: background 0.2s, transform 0.1s;
+            cursor: pointer;
+            box-sizing: border-box;
         }
-        .amz-button:hover { background: #F7CA00; border-color: #F2C200; }
 
-        /* Панель генератора */
+        .amz-button:hover { 
+            background: #F7CA00; 
+            border-color: #F2C200; 
+        }
+
+        .amz-button:active {
+            transform: translateY(1px);
+        }
+
+        /* Панель генератора (видна только в режиме ?mode=edit) */
         #generator {
             background: #ffffff;
-            padding: 20px;
+            padding: 15px;
             border-radius: 12px;
             border: 1px solid #ddd;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             display: none;
-            width: 320px;
+            width: 280px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            z-index: 100;
         }
-        input { width: 100%; margin: 10px 0; padding: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 6px; font-family: 'Montserrat', sans-serif; }
-        #result-link { font-size: 10px; word-break: break-all; background: #f9f9f9; padding: 8px; border: 1px dashed #bbb; margin-top: 10px; user-select: all; color: #444; }
+
+        input { 
+            width: 100%; 
+            margin: 5px 0; 
+            padding: 8px; 
+            box-sizing: border-box; 
+            border: 1px solid #ccc; 
+            border-radius: 6px; 
+            font-family: 'Montserrat', sans-serif;
+            font-size: 12px;
+        }
+
+        #result-link { 
+            font-size: 9px; 
+            word-break: break-all; 
+            background: #f9f9f9; 
+            padding: 5px; 
+            border: 1px dashed #bbb; 
+            margin-top: 8px; 
+            user-select: all; 
+            color: #444; 
+        }
     </style>
 </head>
 <body>
 
     <div id="generator">
-        <strong style="font-size: 16px;">Настройка кнопки VSC</strong>
+        <strong style="font-size: 14px;">Настройка кнопки VSC</strong>
         <input type="text" id="inputText" placeholder="Текст (напр. Смотреть варианты)" oninput="generate()">
         <input type="text" id="inputLink" placeholder="Ссылка на страницу" oninput="generate()">
-        <div style="font-size: 11px; color: #888; margin-top: 10px;">Скопируйте это для Buildin.ai:</div>
+        <div style="font-size: 10px; color: #888; margin-top: 5px;">Скопируйте для Buildin.ai:</div>
         <div id="result-link">Здесь появится ссылка...</div>
     </div>
 
@@ -62,18 +107,22 @@
         const genBox = document.getElementById('generator');
         const resDiv = document.getElementById('result-link');
 
+        // Показываем генератор только если в ссылке есть mode=edit
         if (mode === 'edit') {
             genBox.style.display = 'block';
         }
 
+        // Устанавливаем текст и ссылку из параметров адреса
         btn.innerText = text || 'Смотреть варианты';
         btn.href = link || '#';
 
         function generate() {
             const t = document.getElementById('inputText').value || 'Смотреть варианты';
             const l = document.getElementById('inputLink').value || '#';
+            // Создаем чистую ссылку без лишних параметров
             const baseUrl = window.location.origin + window.location.pathname;
             const finalUrl = `${baseUrl}?text=${encodeURIComponent(t)}&link=${encodeURIComponent(l)}`;
+            
             resDiv.innerText = finalUrl;
             btn.innerText = t;
             btn.href = l;
