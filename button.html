@@ -2,10 +2,10 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600&display=swap" rel="stylesheet">
     <style>
-        body { margin: 0; font-family: Arial, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; background: transparent; }
+        body { margin: 0; font-family: 'Montserrat', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; background: transparent; }
         
-        /* Стиль кнопки Amazon */
         .amz-button {
             background: #FFD814;
             border: 1px solid #FCD200;
@@ -13,41 +13,44 @@
             box-shadow: 0 2px 5px 0 rgba(213,217,217,.5);
             color: #0F1111;
             display: inline-block;
+            font-family: 'Montserrat', sans-serif; /* Применяем Montserrat */
             font-size: 14px;
             line-height: 35px;
-            padding: 0 20px;
+            padding: 0 24px;
             text-align: center;
             text-decoration: none;
-            font-weight: 500;
-            min-width: 200px;
+            font-weight: 600; /* Делаем текст чуть жирнее для стиля */
+            min-width: 220px;
+            transition: background 0.2s;
         }
         .amz-button:hover { background: #F7CA00; border-color: #F2C200; }
 
-        /* Панель генератора (скрывается в Buildin.ai) */
+        /* Панель генератора */
         #generator {
-            background: #f4f4f4;
+            background: #ffffff;
             padding: 20px;
-            border-radius: 10px;
-            border: 1px solid #ccc;
+            border-radius: 12px;
+            border: 1px solid #ddd;
             margin-bottom: 20px;
-            display: none; /* По умолчанию скрыто */
-            width: 300px;
+            display: none;
+            width: 320px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
-        input { width: 100%; margin: 10px 0; padding: 8px; box-sizing: border-box; border: 1px solid #ddd; border-radius: 4px; }
-        #result-link { font-size: 11px; word-break: break-all; background: #fff; padding: 5px; border: 1px dashed #999; margin-top: 10px; user-select: all; }
+        input { width: 100%; margin: 10px 0; padding: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 6px; font-family: 'Montserrat', sans-serif; }
+        #result-link { font-size: 10px; word-break: break-all; background: #f9f9f9; padding: 8px; border: 1px dashed #bbb; margin-top: 10px; user-select: all; color: #444; }
     </style>
 </head>
 <body>
 
     <div id="generator">
-        <strong>Настройка кнопки</strong>
-        <input type="text" id="inputText" placeholder="Текст кнопки (например: Купить)" oninput="generate()">
-        <input type="text" id="inputLink" placeholder="Ссылка (URL страницы)" oninput="generate()">
-        <div style="font-size: 12px; color: #666;">Скопируйте это для Buildin.ai:</div>
-        <div id="result-link"></div>
+        <strong style="font-size: 16px;">Настройка кнопки VSC</strong>
+        <input type="text" id="inputText" placeholder="Текст (напр. Смотреть варианты)" oninput="generate()">
+        <input type="text" id="inputLink" placeholder="Ссылка на страницу" oninput="generate()">
+        <div style="font-size: 11px; color: #888; margin-top: 10px;">Скопируйте это для Buildin.ai:</div>
+        <div id="result-link">Здесь появится ссылка...</div>
     </div>
 
-    <a id="btn" class="amz-button" href="#" target="_top">Кнопка</a>
+    <a id="btn" class="amz-button" href="#" target="_top">Загрузка...</a>
 
     <script>
         const params = new URLSearchParams(window.location.search);
@@ -59,20 +62,17 @@
         const genBox = document.getElementById('generator');
         const resDiv = document.getElementById('result-link');
 
-        // Если открыто в режиме настройки (mode=edit)
         if (mode === 'edit') {
             genBox.style.display = 'block';
-            btn.style.marginTop = '20px';
         }
 
-        // Установка значений кнопки
         btn.innerText = text || 'Смотреть варианты';
         btn.href = link || '#';
 
         function generate() {
             const t = document.getElementById('inputText').value || 'Смотреть варианты';
             const l = document.getElementById('inputLink').value || '#';
-            const baseUrl = window.location.href.split('?')[0];
+            const baseUrl = window.location.origin + window.location.pathname;
             const finalUrl = `${baseUrl}?text=${encodeURIComponent(t)}&link=${encodeURIComponent(l)}`;
             resDiv.innerText = finalUrl;
             btn.innerText = t;
